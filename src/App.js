@@ -1,36 +1,84 @@
-import React, {Component} from 'react'
-import './App.scss'
-import {Route} from 'react-router-dom'
-import About from './About/About'
-import Cars from './Cars/Cars'
+import React, {Component} from 'react';
+import './App.scss';
+import {Route, NavLink, Switch, Redirect} from 'react-router-dom';
+import About from './About/About';
+import Cars from './Cars/Cars';
+import CarDetail from "./CarDetail/CarDetail";
 
 class App extends Component {
-  render() {
+  state = {
+    isLoggedIn: false
+  };
 
+  render() {
     return (
       <div>
         <nav className="nav">
           <ul>
             <li>
-              <a href="/">Home</a>
+              <NavLink
+                to="/"
+                exact
+                activeClassName={'custom-active'}
+              >
+                Home
+              </NavLink>
             </li>
             <li>
-              <a href="/about">About</a>
+              <NavLink
+                to="/about"
+                activeStyle={{
+                  color: 'blue'
+                }}
+              >
+                About
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to={{
+                  pathname: "/cars"
+                }}
+              >
+                Cars
+              </NavLink>
             </li>
           </ul>
         </nav>
 
         <hr/>
 
-        {/*localhost:3000*/}
-        <Route path="/" exact render={() => <h1>Home Page</h1>} />
+        <div style={{textAlign: 'center'}}>
+          <h3>Is logged in {this.state.isLoggedIn ? 'TRUE' : 'FALSE'}</h3>
+          <button
+            style={{margin: '0 auto'}}
+            onClick={() => {
+              this.setState({isLoggedIn: true})
+            }}
+          >
+            Log In
+          </button>
+        </div>
 
-        <About />
+        <hr/>
 
-        <Cars />
+        <Switch>
+          <Route path="/" exact render={() => <h1>Home Title</h1>}/>
+
+          {
+            this.state.isLoggedIn
+              ? <Route path="/about" component={About}/>
+              : null
+          }
+
+          <Route path="/cars/:name" component={CarDetail}/>
+          <Route path="/cars" component={Cars}/>
+          <Redirect to={'/'}/>
+          {/*<Route render={() => <h1 style={{color: 'red', textAlign: 'center'}}>404 not found</h1>} />*/}
+        </Switch>
       </div>
     );
   }
 }
 
-export default App
+export default App;
